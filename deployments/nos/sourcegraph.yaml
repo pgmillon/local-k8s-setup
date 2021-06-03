@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+
+metadata:
+  name: nos.sourcegraph
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+
+spec:
+  description: SourceGraph deployment for NOS
+  
+  sourceRepos:
+    - '*'
+  
+  destinations:
+    - namespace: nos
+      server: https://kubernetes.default.svc
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sourcegraph-app
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: nos.sourcegraph
+  source:
+    repoURL: 'https://github.com/pgmillon/sourcegraph-deploy.git'
+    path: base
+    targetRevision: main
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: nos
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

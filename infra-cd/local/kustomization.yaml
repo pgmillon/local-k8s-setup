@@ -6,6 +6,7 @@ resources:
   - traefik-app.yaml
   - prometheus-app.yaml
 
+  - ../../deployments/nos
 
 
 
